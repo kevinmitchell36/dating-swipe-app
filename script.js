@@ -1,21 +1,53 @@
-const swiper = new Swiper('.swiper', {
-  // Optional parameters
-  direction: 'vertical',
-  loop: true,
+const swiper = document.querySelector('#swiper');
+const like = document.querySelector('#like');
+const dislike = document.querySelector('#dislike');
 
-  // If we need pagination
-  pagination: {
-    el: '.swiper-pagination',
-  },
+const url = [
+  "https://source.unsplash.com/random/1000X1000?sky",
+  "https://source.unsplash.com/random/1000X1000?landscape",
+  "https://source.unsplash.com/random/1000X1000?mountain",
+  "https://source.unsplash.com/random/1000X1000?ocean",
+  "https://source.unsplash.com/random/1000X1000?forest"
+]
 
-  // Navigation arrows
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
+async function getDates() {
+  const call = await fetch('https://randomuser.me/api/')
+  const { results } = await call.json();
+  console.log(results[0].picture);
+  urls.push(results[0].picture.thumbnail);
+  createCards();
+}
 
-  // And if we need scrollbar
-  scrollbar: {
-    el: '.swiper-scrollbar',
-  },
-});
+getDates()
+
+let cardCount = 0;
+
+function appendNewCard() {
+  const card = new Card({
+    imageUrl: urls[cardCount % 6],
+    onDismiss: appendNewCard,
+    onLike: () => {
+      like.style.animationPlayState = 'running';
+      like.classList.toggle('trigger');
+    },
+    onDislike: () => {
+      dislike.style.animationPlayState = 'running';
+      dislike.classList.toggle('trigger');
+    }
+  });
+  console.log(card.imageUrl);
+  swiper.append(card.element);
+  cardCount++;
+
+  const cards = swiper.querySelectorAll('.card:not(.dismissing');
+  cards.forEach((card, index) => {
+    card.style.setProperty('--i', index);
+  });
+
+}
+
+function createCards() {
+  for (let i = 0; i < 6; i++) {
+    appendNewCard()
+  }
+}
